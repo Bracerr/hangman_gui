@@ -1,3 +1,4 @@
+import tkinter
 from tkinter import *
 from random import choice
 from tkinter import messagebox
@@ -5,20 +6,35 @@ from tkinter import messagebox
 
 def play(event):
     global wrong, so_far, max_wrong
-    while wrong < max_wrong and so_far != word:
-        info = str(entry.get())
-        if info in word:
-            new = ''
-            messagebox.showinfo(title='Поздравляем!', message=f'Вы угадали букву {info}')
-            for i in range(len(word)):
-                if info == word[i]:
-                    new += info
-                else:
-                    new += so_far[i]
-            so_far = new
-        else:
-            messagebox.showerror(title='Ошибка', message=f'Буквы {info} не было в слове')
-            wrong += 1
+    info = str(entry.get())
+    if info.isalpha() and len(info) == 1:
+        if wrong < max_wrong and so_far != word:
+            if info in word:
+                new = ''
+                label_information['text'] = 'Угадал!'
+                for i in range(len(word)):
+                    if info == word[i]:
+                        new += info
+                    else:
+                        new += so_far[i]
+                so_far = new
+                label_word['text'] = f'Слово - {so_far}'
+                entry.delete(0, tkinter.END)
+
+            else:
+                wrong += 1
+                label_information['text'] = 'Не угадал :('
+                label_hangman['text'] = f'{HANGMAN[wrong]}'
+                entry.delete(0, tkinter.END)
+
+        if so_far == word:
+            messagebox.showinfo(title='Поздравляем', message='Вы победили')
+
+        if wrong > max_wrong:
+            messagebox.showinfo(title='Увы', message='Вы проиграли')
+
+    else:
+        messagebox.showerror(title='Error', message='Введите ОДНУ букву')
 
 
 root = Tk()
@@ -95,9 +111,10 @@ HANGMAN = (
         """
 )
 max_wrong = len(HANGMAN) - 1
-WORDS = ("пит")
+WORDS = ('залупа', 'хер', 'пенис')
 
 word = choice(WORDS)
+print(word)
 so_far = "_" * len(word)
 wrong = 0
 used = []
@@ -128,5 +145,3 @@ btn_play.grid(row=2, column=3)
 btn_play.bind('<Button-1>', play)
 
 root.mainloop()
-
-
